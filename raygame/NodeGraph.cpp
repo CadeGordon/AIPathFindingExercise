@@ -9,7 +9,7 @@ DynamicArray<NodeGraph::Node*> reconstructPath(NodeGraph::Node* start, NodeGraph
 
 	while (currentNode != start->previous)
 	{
-		currentNode->color = 0xFFFF00FF;
+		currentNode->color = 0xFF0000FF;
 		path.insert(currentNode, 0);
 		currentNode = currentNode->previous;
 	}
@@ -44,6 +44,8 @@ void sortFScore(DynamicArray<NodeGraph::Node*>& nodes)
 
 DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 {
+	resetGraphScore(start);
+
 	//Insert algorithm here
 	DynamicArray<NodeGraph::Node*> openList = DynamicArray<NodeGraph::Node*>();
 	DynamicArray<NodeGraph::Node*> closedList = DynamicArray<NodeGraph::Node*>();
