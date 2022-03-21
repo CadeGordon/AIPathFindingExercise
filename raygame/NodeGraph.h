@@ -35,6 +35,8 @@ namespace NodeGraph
 
 	void drawConnectedNodes(Node* node, DynamicArray<Node*>& drawnList);
 
+	void sortGScore(DynamicArray<Node*>& nodelist);
+
 	void resetGraphScore(Node* start);
 	void resetConnectedNodes(Node* node, DynamicArray<Node*>& resetList);
 }
