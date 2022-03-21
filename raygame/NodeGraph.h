@@ -37,6 +37,8 @@ namespace NodeGraph
 
 	void sortGScore(DynamicArray<Node*>& nodelist);
 
+	float getManhattanDistance(Node* start, Node* end);
+
 	void resetGraphScore(Node* start);
 	void resetConnectedNodes(Node* node, DynamicArray<Node*>& resetList);
 }

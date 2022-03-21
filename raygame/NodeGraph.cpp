@@ -45,61 +45,47 @@ void sortFScore(DynamicArray<NodeGraph::Node*>& nodes)
 DynamicArray<NodeGraph::Node*> NodeGraph::findPath(Node* start, Node* goal)
 {
 	resetGraphScore(start);
-	start->color = 0x00FF00FF;
-	NodeGraph::Node* currentNode;
-	float gScore = 0;
-	
-
 	//Insert algorithm here
-	DynamicArray<NodeGraph::Node*> openList = DynamicArray<NodeGraph::Node*>();
-	DynamicArray<NodeGraph::Node*> closedList = DynamicArray<NodeGraph::Node*>();
+	DynamicArray<NodeGraph::Node*> openSet = DynamicArray<NodeGraph::Node*>();
+	DynamicArray<NodeGraph::Node*> closedSet = DynamicArray<NodeGraph::Node*>();
 
-	openList.addItem(start);
+	Node* currentNode = start;
+	start->color = 0x00FF00FF;
+	openSet.addItem(start);
 
-	currentNode = start;
-
-	while (openList.getLength() > 0)
+	while (openSet.getLength() > 0)
 	{
-		NodeGraph::Node* key = nullptr;
-		int j = 0;
+		
+		sortFScore(openSet);
+		currentNode = openSet[0];
+		openSet.remove(currentNode);
 
-		sortFScore(openList);
-
-		currentNode = openList[0];
-
-		if (currentNode == goal)
-			return reconstructPath(start, currentNode);
-
-		openList.remove(currentNode);
-
-		closedList.addItem(currentNode);
-
-		gScore = currentNode->gScore;
-
-		NodeGraph::Node* smallestGScore = currentNode->edges[0].target;
-
-		if (!closedList.contains(currentNode))
+		if (!closedSet.contains(currentNode))
 		{
-			for (int i = 0; i < openList[0]->edges.getLength(); i++)
+			for (int i = 0; i < currentNode->edges.getLength(); i++)
 			{
+				if (!currentNode->edges[i].target->walkable)
+					continue;
+
 				NodeGraph::Node* targetNode = currentNode->edges[i].target;
 				targetNode->color = 0xFF0000FF;
+
 				if (targetNode->gScore == 0 || targetNode->gScore > currentNode->gScore + currentNode->edges[i].cost)
 				{
 					targetNode->gScore = currentNode->gScore + currentNode->edges[i].cost;
+					targetNode->hScore = getManhattanDistance(targetNode, goal);
+					targetNode->fScore = targetNode->gScore + targetNode->hScore;
 					targetNode->previous = currentNode;
-					openList.addItem(targetNode);
 				}
-				if (!openList.contains(targetNode))
-				{
-					openList.addItem(targetNode);
-				}
+				if (!openSet.contains(targetNode))
+					openSet.addItem(targetNode);
 			}
-			closedList.addItem(currentNode);
+			closedSet.addItem(currentNode);
 		}
 		if (currentNode == goal)
 			return reconstructPath(start, goal);
 	}
+
 	return reconstructPath(start, goal);
 	
 }
@@ -162,6 +148,12 @@ void NodeGraph::sortGScore(DynamicArray<Node*>& nodelist)
 
 		nodelist[j + 1] = key;
 	}
+}
+
+float NodeGraph::getManhattanDistance(Node* start, Node* end)
+{
+	return abs(start->position.x - end->position.x)
+		+ abs(start->position.y - end->position.y);
 }
 
 void NodeGraph::resetGraphScore(Node * start)
